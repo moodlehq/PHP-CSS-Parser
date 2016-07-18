@@ -519,4 +519,10 @@ body {background-url: url("http://somesite.com/images/someimage.gif");}';
 		$sExpected = 'p {padding-right: .75rem \9;background-image: none \9;color: red \9\0;background-color: red \9\0;background-color: red \9\0 !important;content: "red 	\0";content: "red઼";}';
 		$this->assertEquals($sExpected, $oDoc->render());
 	}
+
+	function testMicrosoftFilterParsing() {
+		$oDoc = $this->parsedStructureForFile('ms-filter');
+		$sExpected = ".test {filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#80000000', endColorstr='#00000000', GradientType=1);}";
+		$this->assertSame($sExpected, $oDoc->render());
+	}
 }

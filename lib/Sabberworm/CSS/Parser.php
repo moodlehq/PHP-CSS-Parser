@@ -19,6 +19,7 @@ use Sabberworm\CSS\Value\Size;
 use Sabberworm\CSS\Value\Color;
 use Sabberworm\CSS\Value\URL;
 use Sabberworm\CSS\Value\CSSString;
+use Sabberworm\CSS\Value\Statement;
 use Sabberworm\CSS\Rule\Rule;
 use Sabberworm\CSS\Parsing\UnexpectedTokenException;
 
@@ -427,6 +428,8 @@ class Parser {
 			$oValue = $this->parseURLValue();
 		} else if ($this->comes("'") || $this->comes('"')) {
 			$oValue = $this->parseStringValue();
+		} else if ($this->comes("progid:")) {
+			$oValue = $this->parseMicrosoftFilter();
 		} else {
 			$oValue = $this->parseIdentifier(true, false);
 		}
@@ -485,6 +488,11 @@ class Parser {
 			$this->consume(')');
 		}
 		return new Color($aColor, $this->iLineNo);
+	}
+
+	private function parseMicrosoftFilter() {
+		$sStatement = $this->consumeUntil(')', true, true);
+		return new Statement($sStatement, $this->iLineNo);
 	}
 
 	private function parseURLValue() {

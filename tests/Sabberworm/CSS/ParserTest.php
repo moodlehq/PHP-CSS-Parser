@@ -505,7 +505,6 @@ body {background-url: url("http://somesite.com/images/someimage.gif");}';
 			throw $e;
 		}
 	}
-
 	/**
 	* @expectedException Sabberworm\CSS\Parsing\UnexpectedTokenException
 	*/
@@ -525,4 +524,43 @@ body {background-url: url("http://somesite.com/images/someimage.gif");}';
 		$sExpected = ".test {filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#80000000', endColorstr='#00000000', GradientType=1);}";
 		$this->assertSame($sExpected, $oDoc->render());
 	}
+
+	/**
+	 * @depends testFiles
+	 */
+	function testCommentExtracting() {
+		$oDoc = $this->parsedStructureForFile('comments');
+		$aNodes = $oDoc->getContents();
+
+		// Import property.
+		$importComments = $aNodes[0]->getComments();
+		$this->assertCount(1, $importComments);
+		$this->assertEquals("*\n * Comments Hell.\n ", $importComments[0]->getComment());
+
+		// Declaration block.
+		$fooBarBlock = $aNodes[1];
+		$fooBarBlockComments = $fooBarBlock->getComments();
+		// TODO Support comments in selectors.
+		// $this->assertCount(2, $fooBarBlockComments);
+		// $this->assertEquals("* Number 4 *", $fooBarBlockComments[0]->getComment());
+		// $this->assertEquals("* Number 5 *", $fooBarBlockComments[1]->getComment());
+
+		// Declaration rules.
+		$fooBarRules = $fooBarBlock->getRules();
+		$fooBarRule = $fooBarRules[0];
+		$fooBarRuleComments = $fooBarRule->getComments();
+		$this->assertCount(1, $fooBarRuleComments);
+		$this->assertEquals(" Number 6 ", $fooBarRuleComments[0]->getComment());
+
+		// Media property.
+		$mediaComments = $aNodes[2]->getComments();
+		$this->assertCount(0, $mediaComments);
+
+		// Media children.
+		$mediaRules = $aNodes[2]->getContents();
+		$fooBarComments = $mediaRules[0]->getComments();
+		$this->assertCount(1, $fooBarComments);
+		$this->assertEquals("* Number 10 *", $fooBarComments[0]->getComment());
+	}
+
 }

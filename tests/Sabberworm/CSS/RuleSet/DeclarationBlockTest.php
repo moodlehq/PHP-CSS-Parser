@@ -249,19 +249,24 @@ class DeclarationBlockTest extends \PHPUnit_Framework_TestCase {
 		$oAfter = new Rule('border-bottom-width');
 		$oAfter->setValue(new Size(1, 'px'));
 
+		$oFront = new Rule('margin');
+		$oFront->setValue(new Size(1, 'px'));
+
 		$oWrapper->addRule($oAfter);
+		$oWrapper->addRule($oFront, $oFirst);
 		$oWrapper->addRule($oBefore, $oFirst);
 		$oWrapper->addRule($oMiddle, $oSecond);
 
 		$aRules = $oWrapper->getRules();
 
-		$this->assertSame($oBefore, $aRules[0]);
-		$this->assertSame($oFirst, $aRules[1]);
-		$this->assertSame($oMiddle, $aRules[2]);
-		$this->assertSame($oSecond, $aRules[3]);
-		$this->assertSame($oAfter, $aRules[4]);
+		$this->assertSame($oFront, $aRules[0]);
+		$this->assertSame($oBefore, $aRules[1]);
+		$this->assertSame($oFirst, $aRules[2]);
+		$this->assertSame($oMiddle, $aRules[3]);
+		$this->assertSame($oSecond, $aRules[4]);
+		$this->assertSame($oAfter, $aRules[5]);
 
-		$this->assertSame('.wrapper {left: 16em;left: 10px;text-align: 1;text-align: left;border-bottom-width: 1px;}', $oDoc->render());
+		$this->assertSame('.wrapper {margin: 1px;left: 16em;left: 10px;text-align: 1;text-align: left;border-bottom-width: 1px;}', $oDoc->render());
 	}
 
 }
